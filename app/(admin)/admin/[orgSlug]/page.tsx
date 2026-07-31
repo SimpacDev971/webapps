@@ -25,9 +25,11 @@ export default async function OrgAdminPage({
       ...(q
         ? {
             user: {
+              // MySQL's default collation (utf8mb4_*_ci) is already
+              // case-insensitive, so no `mode` filter needed (Postgres-only).
               OR: [
-                { name: { contains: q, mode: "insensitive" } },
-                { email: { contains: q, mode: "insensitive" } },
+                { name: { contains: q } },
+                { email: { contains: q } },
               ],
             },
           }
