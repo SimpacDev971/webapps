@@ -39,3 +39,9 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+/lib/generated/prisma
+
+# AI agent tooling (per-developer, not part of the deployed app)
+/.continue/
+skills-lock.json
