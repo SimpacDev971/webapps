@@ -424,8 +424,8 @@ export default function DocumentSelector() {
                     className={[
                       "w-full rounded-xl border px-4 py-3 transition-colors",
                       isDelivered
-                        ? "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800"
-                        : "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800",
+                        ? "bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800"
+                        : "bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800",
                     ].join(" ")}
                   >
                     {/* Ligne principale : destination */}
