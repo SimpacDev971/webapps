@@ -24,7 +24,7 @@ interface MarchandiseRow {
 
 type PaletteMode = "sec" | "froid" | "both";
 
-const API_BASE = "/api/simpac/lettre-de-voiture";
+const API_BASE = "/api/etmr/lettre-de-voiture";
 const DW_FORM_BASE =
   "https://simpac.docuware.cloud/docuware/formsweb/etm_lettre-copy";
 const PREFS_KEY = "dw_prefs";

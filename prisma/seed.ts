@@ -2,26 +2,26 @@ import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
 async function main() {
-  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@simpac.fr";
+  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@etmr.fr";
   const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "ChangeMe123!";
 
   const organization = await prisma.organization.upsert({
-    where: { slug: "simpac" },
+    where: { slug: "etmr" },
     update: {},
     create: {
-      name: "Simpac",
-      slug: "simpac",
+      name: "ETMR",
+      slug: "etmr",
     },
   });
 
   const app = await prisma.app.upsert({
     where: {
-      clientSlug_appSlug: { clientSlug: "simpac", appSlug: "lettre-de-voiture" },
+      clientSlug_appSlug: { clientSlug: "etmr", appSlug: "lettre-de-voiture" },
     },
     update: {},
     create: {
       organizationId: organization.id,
-      clientSlug: "simpac",
+      clientSlug: "etmr",
       appSlug: "lettre-de-voiture",
       name: "Lettre de voiture",
       authRequired: true,
@@ -33,7 +33,7 @@ async function main() {
   if (!user) {
     const signUpResult = await auth.api.signUpEmail({
       body: {
-        name: "Admin Simpac",
+        name: "Admin ETMR",
         email: adminEmail,
         password: adminPassword,
       },

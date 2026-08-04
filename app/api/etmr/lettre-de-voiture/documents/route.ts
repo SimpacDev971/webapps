@@ -15,7 +15,7 @@ interface DwItem {
 }
 
 export async function GET(request: NextRequest) {
-  const { response } = await requireApiOrgAccess("simpac", request);
+  const { response } = await requireApiOrgAccess("etmr", request);
   if (response) return response;
 
   const { searchParams } = request.nextUrl;
