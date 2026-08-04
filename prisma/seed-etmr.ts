@@ -1,27 +1,34 @@
 import { auth } from "../lib/auth";
 import { prisma } from "../lib/prisma";
 
+// Creates the "etmr" client tenant (org + app + owner login) alongside the
+// existing "simpac" one. Run once with `npx tsx prisma/seed-etmr.ts`.
+// Unlike prisma/seed.ts, this user is NOT promoted to platform superadmin —
+// it's a regular client login, scoped to the etmr org via Member "owner".
 async function main() {
-  const adminEmail = process.env.SEED_ADMIN_EMAIL ?? "admin@simpac.fr";
-  const adminPassword = process.env.SEED_ADMIN_PASSWORD ?? "ChangeMe123!";
+  const adminEmail = process.env.SEED_ETMR_ADMIN_EMAIL ?? "trans.etm@orange.fr";
+  const adminPassword = process.env.SEED_ETMR_ADMIN_PASSWORD;
+  if (!adminPassword) {
+    throw new Error("Set SEED_ETMR_ADMIN_PASSWORD before running this script.");
+  }
 
   const organization = await prisma.organization.upsert({
-    where: { slug: "simpac" },
+    where: { slug: "etmr" },
     update: {},
     create: {
-      name: "Simpac",
-      slug: "simpac",
+      name: "ETMR",
+      slug: "etmr",
     },
   });
 
   const app = await prisma.app.upsert({
     where: {
-      clientSlug_appSlug: { clientSlug: "simpac", appSlug: "lettre-de-voiture" },
+      clientSlug_appSlug: { clientSlug: "etmr", appSlug: "lettre-de-voiture" },
     },
     update: {},
     create: {
       organizationId: organization.id,
-      clientSlug: "simpac",
+      clientSlug: "etmr",
       appSlug: "lettre-de-voiture",
       name: "Lettre de voiture",
       authRequired: true,
@@ -33,7 +40,7 @@ async function main() {
   if (!user) {
     const signUpResult = await auth.api.signUpEmail({
       body: {
-        name: "Admin Simpac",
+        name: "Admin ETMR",
         email: adminEmail,
         password: adminPassword,
       },
@@ -41,19 +48,9 @@ async function main() {
     user = await prisma.user.findUniqueOrThrow({
       where: { id: signUpResult.user.id },
     });
-    console.log(`Created admin user ${adminEmail} (password: ${adminPassword})`);
+    console.log(`Created user ${adminEmail} (password: ${adminPassword})`);
   } else {
-    console.log(`Admin user ${adminEmail} already exists, skipping creation.`);
-  }
-
-  // The seeded admin is always the platform superadmin, whether just created
-  // or pre-existing (e.g. after a schema change that introduced User.role).
-  if (user.role !== "superadmin") {
-    user = await prisma.user.update({
-      where: { id: user.id },
-      data: { role: "superadmin" },
-    });
-    console.log(`Promoted ${adminEmail} to superadmin.`);
+    console.log(`User ${adminEmail} already exists, skipping creation.`);
   }
 
   const existingMembership = await prisma.member.findFirst({
